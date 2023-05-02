@@ -1,0 +1,51 @@
+- name: Create all params
+  hosts: localhost
+  tasks:
+    - name: Install botocore and boto3
+      ansible.builtin.pip:
+        name: "{{item}}"
+        executable: pip3
+      loop:
+        - botocore
+        - boto3
+    - name: Create Parameter.
+      ansible.builtin.shell: aws ssm put-parameter --name "{{item.key}}" --type "String" --value "{{item.value}}" --overwrite
+      loop:
+       - {key: "mutable.cart.dev.CATALOGUE_HOST", value: "catalogue-dev.roboshop.internal"}
+       - {key: "mutable.cart.dev.REDIS_HOST", value: "redis-dev.roboshop.internal"}
+       - {key: "mutable.catalogue.dev.MONGO", value: "true"}
+       - {key: "mutable.catalogue.dev.MONGO_URL", value: "mongodb://mongodb-dev.roboshop.internal:27017/catalogue"}
+       - {key: "mutable.payment.dev.CART_HOST", value: "cart-dev.roboshop.internal"}
+       - {key: "mutable.payment.dev.USER_HOST", value: "user-dev.roboshop.internal"}
+       - {key: "mutable.payment.dev.AMQP_HOST", value: "rabbitmq-dev.roboshop.internal"}
+       - {key: "mutable.payment.dev.AMQP_USER", value: "roboshop"}
+       - {key: "mutable.payment.dev.AMQP_PASS", value: "roboshop123"}
+       - {key: "mutable.mysql.dev.MYSQL_PASSWORD", value: "RoboShop@1"}
+       - {key: "mutable.rabbitmq.dev.RABBITMQ_PASSWORD", value: "roboshop123"}
+       - {key: "mutable.shipping.dev.CART_ENDPOINT", value: "cart-dev.roboshop.internal:8080"}
+       - {key: "mutable.shipping.dev.DB_HOST", value: "mysql-dev.roboshop.internal"}
+       - {key: "mutable.user.dev.MONGO", value: "true"}
+       - {key: "mutable.user.dev.REDIS_HOST", value: "redis-dev.roboshop.internal"}
+       - {key: "mutable.user.dev.MONGO_URL", value: "mongodb://mongodb-dev.roboshop.internal:27017/users"}
+
+       - {key: "immutable.cart.CATALOGUE_HOST", value: "catalogue-ENV.roboshop.internal"}
+       - {key: "immutable.cart.REDIS_HOST", value: "redis-ENV.roboshop.internal"}
+       - {key: "immutable.catalogue.MONGO", value: "true"}
+       - {key: "immutable.catalogue.MONGO_URL", value: "mongodb://mongodb-ENV.roboshop.internal:27017/catalogue"}
+       - {key: "immutable.payment.CART_HOST", value: "cart-ENV.roboshop.internal"}
+       - {key: "immutable.payment.USER_HOST", value: "user-ENV.roboshop.internal"}
+       - {key: "immutable.payment.AMQP_HOST", value: "rabbitmq-ENV.roboshop.internal"}
+       - {key: "immutable.payment.AMQP_USER", value: "roboshop"}
+       - {key: "immutable.payment.AMQP_PASS", value: "roboshop123"}
+       - {key: "immutable.mysql.MYSQL_PASSWORD", value: "RoboShop@1"}
+       - {key: "immutable.rabbitmq.RABBITMQ_PASSWORD", value: "roboshop123"}
+       - {key: "immutable.shipping.CART_ENDPOINT", value: "cart-ENV.roboshop.internal:8080"}
+       - {key: "immutable.shipping.DB_HOST", value: "mysql-ENV.roboshop.internal"}
+       - {key: "immutable.user.MONGO", value: "true"}
+       - {key: "immutable.user.REDIS_HOST", value: "redis-ENV.roboshop.internal"}
+       - {key: "immutable.user.MONGO_URL", value: "mongodb://mongodb-ENV.roboshop.internal:27017/users"}
+       - {key: "immutable.docdb.catalogue.MONGO_URL", value: "mongodb://DOCDB_USER:DOCDB_PASS@DOCDB_ENDPOINT:27017/catalogue?tls=true&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"}
+       - {key: "immutable.docdb.user.MONGO_URL", value: "mongodb://DOCDB_USER:DOCDB_PASS@DOCDB_ENDPOINT:27017/users?tls=true&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"}
+
+
+# {{ lookup('aws_ssm', 'mutable.catalogue.dev.MONGO_URL', region='us-east-1' ) }}
