@@ -15,8 +15,9 @@ create_ec2() {
       --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${COMPONENT}}, {Key=Monitor,Value=Yes}]"  \
       --instance-market-options "MarketType=spot,SpotOptions={SpotInstanceType=persistent,InstanceInterruptionBehavior=stop}"\
       --security-group-ids ${SGID} \
+      | jq '.Instances[].PrivateIpAddress' | sed -e 's/"//g')
       ##--iam-instance-profile Name=SecretManager_Role_for_RoboShop_Nodes \
-       | jq '.Instances[].PrivateIpAddress' | sed -e 's/"//g')
+
 
   sed -e "s/IPADDRESS/${PRIVATE_IP}/" -e "s/COMPONENT/${COMPONENT}/" route53.json >/tmp/record.json
   aws route53 change-resource-record-sets --hosted-zone-id ${ZONE_ID} --change-batch file:///tmp/record.json | jq
